@@ -2,18 +2,21 @@ use colored::*;
 use std::collections::HashMap;
 use std::fmt;
 
+use datasource::Data;
 use scheduler::*;
 
 #[derive(Debug)]
 pub enum HttpMethod {
   Unknown,
   Get,
+  Post,
 }
 
 pub struct Scenario {
   pub start: f64,
   pub upstreams: Vec<Upstream>,
   pub schedulers: Vec<Scheduler>,
+  pub datasources: HashMap<String, Data>,
 }
 
 impl fmt::Display for Scenario {
@@ -28,6 +31,11 @@ impl fmt::Display for Scenario {
       write!(f, "{:#}", upstream);
     }
 
+    writeln!(f, "{}", "DATASOURCES:".blue().bold());
+    for (name, data) in &self.datasources {
+      writeln!(f, "  - {}: {} entries", name.bold(), data.len());
+    }
+
     Ok(())
   }
 }
@@ -38,6 +46,7 @@ pub struct Upstream {
   pub url: String,
   pub headers: HashMap<String, String>,
   pub basic: Option<UpstreamBasicAuth>,
+  pub body: Option<String>,
 }
 
 impl fmt::Display for Upstream {

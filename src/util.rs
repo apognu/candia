@@ -1,9 +1,13 @@
+use std::collections::HashMap;
 use std::io::{self, Write};
 use std::process;
 
 use chrono::prelude::*;
 use colored::*;
+use rand::{self, Rng};
+use regex::Regex;
 
+use datasource::Data;
 use result::{Failure, Success};
 
 pub fn current_epoch() -> f64 {
@@ -65,4 +69,23 @@ pub fn log(result: &Result<Success, Failure>) -> String {
     Ok(s) => format!("{},{},{},{},{}\n", s.start, s.request, "OK", s.code, s.duration),
     Err(f) => format!("{},{},{},{},{}\n", f.start, f.request, "KO", f.code, f.duration),
   }
+}
+
+pub fn interpolate(base: &str, datasources: &HashMap<String, Data>) -> String {
+  let rgx = Regex::new(r"\{(?P<label>[a-z_]+)\}").unwrap();
+
+  rgx.captures_iter(base).fold(String::from(base), |result, capture| {
+    let pattern = capture.get(0).unwrap().as_str();
+    let label = capture.name("label").unwrap().as_str();
+
+    let value = match datasources.get(label) {
+      Some(vec) => rand::thread_rng().choose(&vec),
+      None => None,
+    };
+
+    match value {
+      Some(value) => result.replacen(pattern, value, 1),
+      None => result,
+    }
+  })
 }

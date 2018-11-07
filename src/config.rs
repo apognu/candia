@@ -5,6 +5,7 @@ use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 
+use datasource::{self, DataSource};
 use interface::specs::{self, HttpMethod::*};
 use scheduler::{strategies, *};
 use util;
@@ -13,6 +14,7 @@ use util;
 pub struct Config {
   schedulers: Vec<ConfigScheduler>,
   upstreams: Vec<ConfigUpstream>,
+  datasources: HashMap<String, ConfigDatasource>,
 }
 
 #[derive(Deserialize)]
@@ -32,12 +34,21 @@ struct ConfigUpstream {
   headers: HashMap<String, String>,
   #[serde(default)]
   basic: Option<ConfigUpstreamBasicAuth>,
+  #[serde(default)]
+  body: Option<String>,
 }
 
 #[derive(Deserialize)]
 struct ConfigUpstreamBasicAuth {
   username: String,
   password: String,
+}
+
+#[derive(Deserialize)]
+struct ConfigDatasource {
+  kind: String,
+  source: Option<String>,
+  data: Option<Vec<String>>,
 }
 
 impl Config {
@@ -55,6 +66,7 @@ impl Config {
       start: util::current_epoch_with_ms(),
       schedulers: vec![],
       upstreams: vec![],
+      datasources: HashMap::new(),
     };
 
     scenario.schedulers = self
@@ -104,6 +116,7 @@ impl Config {
       .map(|upstream| specs::Upstream {
         method: match upstream.method.as_ref() {
           "GET" => Get,
+          "POST" => Post,
           unknown => {
             util::fatal(format!("unknown HTTP method: {}", unknown).as_ref());
             Unknown
@@ -118,6 +131,21 @@ impl Config {
             password: basic.password.to_owned(),
           }),
         },
+        body: upstream.body.to_owned(),
+      }).collect();
+
+    scenario.datasources = self
+      .datasources
+      .iter()
+      .map(|(name, datasource)| {
+        let plugin: Vec<String> = match datasource {
+          ConfigDatasource { ref kind, source: Some(source), .. } if kind == "file" => datasource::File::new(source).iter(),
+          ConfigDatasource { ref kind, source: Some(source), .. } if kind == "directory" => datasource::Directory::new(source).iter(),
+          ConfigDatasource { ref kind, data: Some(data), .. } if kind == "array" => datasource::Array::new(data).iter(),
+          _ => vec![],
+        };
+
+        (name.to_owned(), plugin)
       }).collect();
 
     scenario

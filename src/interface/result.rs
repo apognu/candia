@@ -78,7 +78,7 @@ pub fn process(results: &Arc<Mutex<Vec<Result<Success, Failure>>>>) {
       ("Requests count", format!("{}", data.len())),
       ("Success count:", format!("{}", success.len())),
       ("Error count:", format!("{}", data.len() - success.len())),
-      ("Success rate:", format!("{:.2}%", format_rate(data.len(), success.len()))),
+      ("Success rate:", format!("{:.2}%", format_rate(success.len(), data.len()))),
       ("Mean:", format_res_ms(histogram.mean())),
       ("Std. dev.:", format_opt_ms(histogram.stddev())),
       ("90th percentile:", format_res_ms(histogram.percentile(90.0))),

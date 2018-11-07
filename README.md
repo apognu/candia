@@ -40,7 +40,45 @@ upstreams:
       Authorization: Bearer abcdefghijklmnopqrstuvwxyz
 ```
 
-For now, only ```GET``` requests with fixed headers are supported. In the future, I may implement other methods, dynamic string params, headers and bodies.
+For now, only ```GET``` and ```POST``` requests are supported.
+
+### Dynamic parameters
+
+You have the possibility, for some configuration attributes, to replace substrings from random seed data taken from data sources. For now, you can interpolate data in **url strings**, **header values** and **bodies**. For retrieving data, there are two strategies for now: from text files (one value per line), and from static arrays defined in the configuration.
+
+Every data source must be declared in a separate ```datasource``` section of the configuration, with a label which will be used in strings, and used as ```{label}```.
+
+The following methods of retrieving data can be used:
+
+ * ```array```: each item in the YAML array is mapped to a value in the pool.
+ * ```file```: each line is mapped to a value in the pool.
+ * ```directory```: each file in the directory is mapped to a value in the pool.
+
+```
+upstreams:
+  - method: GET
+    url: https://{domain}/user?user={users}
+    headers:
+      Authorization: {users}
+  - method: POST
+    url: https://{domain}/user
+    bodies: "{bodies}"
+
+datasources:
+  bodies:
+    type: directory
+    source: /tmp/bodies
+  domains:
+    type: array
+    data:
+      - example.net
+      - api.example.net
+  users:
+    type: file
+    source: /tmp/users    
+```
+
+Those interpolators, in the future, will be usable in more locations and more data sources will be implemeted (such as from a directory of files).
 
 ## Check the configuration
 

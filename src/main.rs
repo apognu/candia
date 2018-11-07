@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate serde_derive;
 extern crate chrono;
+extern crate regex;
 #[macro_use]
 extern crate clap;
 extern crate colored;
@@ -9,6 +10,7 @@ extern crate rand;
 extern crate reqwest;
 
 mod config;
+mod datasource;
 mod interface;
 mod scheduler;
 mod util;

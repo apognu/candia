@@ -63,19 +63,30 @@ pub fn request(options: &Arc<config::Options>, scenario: &Arc<specs::Scenario>, 
   let duration = util::current_epoch_ms();
   let offset = util::elapsed_since(scenario.start);
 
+  let url = util::interpolate(&req.url, &scenario.datasources);
+
   // TODO: add more methods
   let request = match req.method {
-    Get => client.get(&req.url),
+    Get => client.get(&url),
+    Post => client.post(&url),
     _ => return Failure::global(offset, String::new(), 0, String::new()),
   };
 
   // Add headers
-  let request = req.headers.iter().fold(request, |r, (key, value)| r.header::<&str, &str>(&key, &value));
+  let request = req
+    .headers
+    .iter()
+    .fold(request, |r, (key, value)| r.header::<&str, &str>(&key, &util::interpolate(value, &scenario.datasources)));
 
   // Add Basic authentication
   let request = match req.basic {
     None => request,
     Some(ref basic) => request.basic_auth(&basic.username, Some(&basic.password)),
+  };
+
+  let request = match &req.body {
+    None => request,
+    Some(body) => request.body(util::interpolate(&body, &scenario.datasources)),
   };
 
   let request = request.build().unwrap();
