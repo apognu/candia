@@ -117,3 +117,20 @@ STATISTICS:
 95th percentile: 46ms
 99th percentile: 69ms
 ```
+## View and process results
+
+On top of the simple statistics returned by the ```run``` command, each run created at CSV log file, detailing the execution of each request, its name is ```candia-YYYY-MM-DDTHH:MM:SS.log```, and looks like this:
+
+```
+$ cat candia-2018-11-08T16:33:13.csv
+Start offset,Request,State,Status code,Duration (ms)
+1,GET http://127.1.1.1:8080/?user=user1,OK,200,8
+1,GET http://127.0.0.1:8080/?user=user1,OK,200,28
+1,GET http://127.0.0.1:8080/?user=user1,OK,200,9
+2,GET http://127.1.1.1:8080/?user=user1,OK,200,21
+2,GET http://127.0.0.1:8080/?user=user2,OK,200,25
+2,GET http://127.0.0.1:8080/?user=user1,OK,200,14
+2,GET http://127.0.0.1:8080/?user=user1,OK,200,24
+3,GET http://127.1.1.1:8080/?user=user3,OK,200,14
+3,GET http://127.1.1.1:8080/?user=user3,OK,200,24
+```
