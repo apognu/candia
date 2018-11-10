@@ -53,6 +53,7 @@ fn parse_cli() -> Result<(), Box<dyn Error>> {
 fn run(options: config::Options, args: &clap::ArgMatches) -> Result<(), Box<dyn Error>> {
   let config = config::Config::read(args.value_of("config").unwrap())?;
   let scenario = Arc::new(config.create_scenario());
+  let timeout = scenario.options.timeout;
   let options = Arc::new(options);
   let results = Arc::new(Mutex::new(vec![]));
   let do_log = args.occurrences_of("disable_logging") == 0;
@@ -89,7 +90,7 @@ fn run(options: config::Options, args: &clap::ArgMatches) -> Result<(), Box<dyn 
 
   // Main loop iterating over the different configured schedulers
   let main = thread::spawn(move || {
-    // Start running the curent scheduler, if there are no schedulers left, the scanrio is finished
+    // Start running the curent scheduler, if there are no schedulers left, the scenario is finished
     for scheduler in &scenario.schedulers {
       let start = util::current_epoch();
 
@@ -97,17 +98,20 @@ fn run(options: config::Options, args: &clap::ArgMatches) -> Result<(), Box<dyn 
       loop {
         let result = scheduler::tick(&Arc::clone(&options), &Arc::clone(&scenario), scheduler, start, &Sender::clone(&tx));
 
-        // A scheduler can tell us if it is finished or not
+        // A scheduler can tell us if it is finished or not, if it is, we skip to the next scheduler in line
         if let State::Stop = result {
           break;
         }
 
+        // We send a tick every second for the schedule to be able to schedule its requests
         thread::sleep(Duration::from_secs(1));
       }
     }
   });
 
   main.join().unwrap();
+
+  thread::sleep(Duration::from_secs(timeout));
 
   result::process(&results);
 

@@ -17,6 +17,9 @@ For each spawned request, a random request specification is picked from the conf
 A scenario is represented as the following configuration file:
 
 ```
+options:
+  timeout: 5
+
 schedulers:
   - type: SteppedConstant
     steps:
@@ -45,6 +48,8 @@ upstreams:
 ```
 
 For now, only ```GET``` and ```POST``` requests are supported.
+
+As well as setting each request's timeout, the ```timeout``` setting defines how long the runner will wait when all schedulers are done to possibly wait for to-be-fulfilled requests. Preferably, we will, in the future, actually check if all requests have been fulfilled.
 
 ### Dynamic parameters
 
@@ -88,13 +93,16 @@ Those interpolators, in the future, will be usable in more locations and more da
 
 ```
 $ candia check config.yml
+OPTIONS:
+  - timeout: 5s
+
 SCHEDULERS:
- - type: RampUp
-   ramp up requests every 1s from 1 to 100 for 15s
- - type: Pause
-   pause for 10s
- - type: Constant
-   100 requests every 5s for 10s
+  - type: RampUp
+    ramp up requests every 1s from 1 to 100 for 15s
+  - type: Pause
+    pause for 10s
+  - type: Constant
+    100 requests every 5s for 10s
 
 UPSTREAMS:
   - Get http://127.0.0.1:8080/

@@ -12,13 +12,13 @@ pub struct SteppedConstant {
 
 impl fmt::Display for SteppedConstant {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    writeln!(f, " - {} {}", "type:".dimmed(), "SteppedConstant".bold());
-    writeln!(f, "   {}", "steps:".dimmed());
+    writeln!(f, "  - {} {}", "type:".dimmed(), "SteppedConstant".bold());
+    writeln!(f, "    {}", "steps:".dimmed());
 
     for (idx, step) in self.steps.iter().enumerate() {
       writeln!(
         f,
-        "     {}. {} requests every {}s for {}s",
+        "      {}. {} requests every {}s for {}s",
         idx + 1,
         step.count.to_string().bold(),
         step.interval.to_string().bold(),

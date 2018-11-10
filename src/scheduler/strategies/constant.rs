@@ -14,10 +14,10 @@ pub struct Constant {
 
 impl fmt::Display for Constant {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    writeln!(f, " - {} {}", "type:".dimmed(), "Constant".bold());
+    writeln!(f, "  - {} {}", "type:".dimmed(), "Constant".bold());
     writeln!(
       f,
-      "   {} requests every {}s for {}s",
+      "    {} requests every {}s for {}s",
       self.count.to_string().bold(),
       self.interval.to_string().bold(),
       self.duration.to_string().bold()

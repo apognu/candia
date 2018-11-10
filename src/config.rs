@@ -12,9 +12,15 @@ use util;
 
 #[derive(Deserialize)]
 pub struct Config {
+  options: Option<ConfigOptions>,
   schedulers: Vec<ConfigScheduler>,
   upstreams: Vec<ConfigUpstream>,
   datasources: Option<HashMap<String, ConfigDatasource>>,
+}
+
+#[derive(Deserialize)]
+pub struct ConfigOptions {
+  pub timeout: Option<u64>,
 }
 
 #[derive(Deserialize)]
@@ -63,10 +69,18 @@ impl Config {
 
   pub fn create_scenario(&self) -> specs::Scenario {
     let mut scenario = specs::Scenario {
+      options: specs::Options::default(),
       start: util::current_epoch_with_ms(),
       schedulers: vec![],
       upstreams: vec![],
       datasources: HashMap::new(),
+    };
+
+    scenario.options = match self.options {
+      Some(ref options) => specs::Options {
+        timeout: options.timeout.unwrap_or(15),
+      },
+      None => specs::Options::default(),
     };
 
     scenario.schedulers = self

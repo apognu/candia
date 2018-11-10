@@ -12,8 +12,8 @@ pub struct Pause {
 
 impl fmt::Display for Pause {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    writeln!(f, " - {} {}", "type:".dimmed(), "Pause".bold());
-    writeln!(f, "   pause for {}s", self.duration.to_string().bold(),);
+    writeln!(f, "  - {} {}", "type:".dimmed(), "Pause".bold());
+    writeln!(f, "    pause for {}s", self.duration.to_string().bold(),);
 
     Ok(())
   }

@@ -15,10 +15,10 @@ pub struct DoubleEvery {
 
 impl fmt::Display for DoubleEvery {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    writeln!(f, " - {} {}", "type:".dimmed(), "DoubleEvery".bold());
+    writeln!(f, "  - {} {}", "type:".dimmed(), "DoubleEvery".bold());
     writeln!(
       f,
-      "   {} requests every {}s for {}s, doubling every {}s",
+      "    {} requests every {}s for {}s, doubling every {}s",
       self.count.to_string().bold(),
       self.interval.to_string().bold(),
       self.duration.to_string().bold(),

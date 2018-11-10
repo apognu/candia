@@ -60,10 +60,10 @@ pub fn tick<'a>(options: &'a Arc<config::Options>, scenario: &Arc<specs::Scenari
 }
 
 pub fn request(options: &Arc<config::Options>, scenario: &Arc<specs::Scenario>, req: &specs::Upstream) -> Result<Success, Failure> {
-  let client = Client::new();
   let duration = util::current_epoch_ms();
   let offset = util::elapsed_since(scenario.start);
 
+  let client = Client::builder().timeout(Duration::from_secs(scenario.options.timeout)).build().unwrap();
   let url = util::interpolate(&req.url, &scenario.datasources);
 
   // TODO: add more methods
@@ -93,7 +93,7 @@ pub fn request(options: &Arc<config::Options>, scenario: &Arc<specs::Scenario>, 
   let request = request.build().unwrap();
   let request_desc = format!("{} {}", request.method(), request.url());
 
-  match Client::new().execute(request) {
+  match client.execute(request) {
     Ok(response) => {
       if options.verbose {
         util::write_flush("·");

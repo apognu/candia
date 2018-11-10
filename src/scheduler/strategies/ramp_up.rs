@@ -15,10 +15,10 @@ pub struct RampUp {
 
 impl fmt::Display for RampUp {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    writeln!(f, " - {} {}", "type:".dimmed(), "RampUp".bold());
+    writeln!(f, "  - {} {}", "type:".dimmed(), "RampUp".bold());
     writeln!(
       f,
-      "   ramp up requests every {}s from {} to {} for {}s",
+      "    ramp up requests every {}s from {} to {} for {}s",
       self.interval.to_string().bold(),
       self.from.to_string().bold(),
       self.to.to_string().bold(),

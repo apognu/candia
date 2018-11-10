@@ -13,14 +13,29 @@ pub enum HttpMethod {
 }
 
 pub struct Scenario {
+  pub options: Options,
   pub start: f64,
   pub upstreams: Vec<Upstream>,
   pub schedulers: Vec<Scheduler>,
   pub datasources: HashMap<String, Data>,
 }
 
+pub struct Options {
+  pub timeout: u64,
+}
+
+impl Default for Options {
+  fn default() -> Self {
+    Self { timeout: 5 }
+  }
+}
+
 impl fmt::Display for Scenario {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    writeln!(f, "{}", "OPTIONS".blue().bold());
+    writeln!(f, "  {} {}", "timeout:".dimmed(), format!("{}s", self.options.timeout).bold());
+    writeln!(f);
+
     writeln!(f, "{}", "SCHEDULERS:".blue().bold());
     for scheduler in &self.schedulers {
       writeln!(f, "{:#}", scheduler);
