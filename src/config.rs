@@ -103,6 +103,11 @@ impl Config {
           from: *scheduler.args.get("from").unwrap_or(&0),
           to: *scheduler.args.get("to").unwrap_or(&0),
         })),
+
+        "Pause" => Some(Scheduler::Pause(strategies::Pause {
+          duration: *scheduler.args.get("duration").unwrap_or(&0),
+        })),
+
         unknown => {
           util::fatal(format!("unknown scheduler '{}'", unknown).as_ref());
           None

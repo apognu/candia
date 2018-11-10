@@ -21,6 +21,7 @@ pub fn tick<'a>(options: &'a Arc<config::Options>, scenario: &Arc<specs::Scenari
     Scheduler::SteppedConstant(s) => s.schedule(start),
     Scheduler::DoubleEvery(s) => s.schedule(start),
     Scheduler::RampUp(s) => s.schedule(start),
+    Scheduler::Pause(s) => s.schedule(start),
   };
 
   // If requests must be spawned

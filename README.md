@@ -8,6 +8,7 @@ Candia does not allow you to craft complex funnels, following the browsing patte
  * **Stepped constant requests** : same as **Constant request**, but allows you to specify several stages, increasing and decreasing the number of spawned requests in each stage.
  * **Double every period** : doubles the number of spawned requests for every period of time.
  * **Ramp up**: Linearly increases the number of spawned requests for a period of time, between two bounds.
+ * **Pause**: Do not send any requests for a number of seconds.
 
 For each spawned request, a random request specification is picked from the configured upstreams.
 
@@ -25,6 +26,9 @@ schedulers:
       - duration: 30
         count: 20
         interval: 2
+  - type: Pause
+    args:
+      duration: 5
   - type: RampUp
     args:
       duration: 60
@@ -87,6 +91,10 @@ $ candia check config.yml
 SCHEDULERS:
  - type: RampUp
    ramp up requests every 1s from 1 to 100 for 15s
+ - type: Pause
+   pause for 10s
+ - type: Constant
+   100 requests every 5s for 10s
 
 UPSTREAMS:
   - Get http://127.0.0.1:8080/

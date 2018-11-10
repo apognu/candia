@@ -15,6 +15,7 @@ pub enum Scheduler {
   SteppedConstant(strategies::SteppedConstant),
   DoubleEvery(strategies::DoubleEvery),
   RampUp(strategies::RampUp),
+  Pause(strategies::Pause),
 }
 
 impl fmt::Display for Scheduler {
@@ -24,6 +25,7 @@ impl fmt::Display for Scheduler {
       Scheduler::SteppedConstant(s) => write!(f, "{:#}", s),
       Scheduler::DoubleEvery(s) => write!(f, "{:#}", s),
       Scheduler::RampUp(s) => write!(f, "{:#}", s),
+      Scheduler::Pause(s) => write!(f, "{:#}", s),
     }
   }
 }
