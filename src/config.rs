@@ -14,7 +14,7 @@ use util;
 pub struct Config {
   schedulers: Vec<ConfigScheduler>,
   upstreams: Vec<ConfigUpstream>,
-  datasources: HashMap<String, ConfigDatasource>,
+  datasources: Option<HashMap<String, ConfigDatasource>>,
 }
 
 #[derive(Deserialize)]
@@ -134,19 +134,22 @@ impl Config {
         body: upstream.body.to_owned(),
       }).collect();
 
-    scenario.datasources = self
-      .datasources
-      .iter()
-      .map(|(name, datasource)| {
-        let plugin: Vec<String> = match datasource {
-          ConfigDatasource { ref kind, source: Some(source), .. } if kind == "file" => datasource::File::new(source).iter(),
-          ConfigDatasource { ref kind, source: Some(source), .. } if kind == "directory" => datasource::Directory::new(source).iter(),
-          ConfigDatasource { ref kind, data: Some(data), .. } if kind == "array" => datasource::Array::new(data).iter(),
-          _ => vec![],
-        };
+    scenario.datasources = match self.datasources {
+      Some(ref datasources) => datasources
+        .iter()
+        .map(|(name, datasource)| {
+          let plugin: Vec<String> = match datasource {
+            ConfigDatasource { ref kind, source: Some(source), .. } if kind == "file" => datasource::File::new(source).iter(),
+            ConfigDatasource { ref kind, source: Some(source), .. } if kind == "directory" => datasource::Directory::new(source).iter(),
+            ConfigDatasource { ref kind, data: Some(data), .. } if kind == "array" => datasource::Array::new(data).iter(),
+            _ => vec![],
+          };
 
-        (name.to_owned(), plugin)
-      }).collect();
+          (name.to_owned(), plugin)
+        }).collect(),
+
+      None => scenario.datasources,
+    };
 
     scenario
   }

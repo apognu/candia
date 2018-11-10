@@ -33,7 +33,7 @@ impl Schedulable for DoubleEvery {
   fn schedule(&self, start: f64) -> Option<(u64, u64)> {
     let elapsed = util::current_epoch() - start;
 
-    if util::elapsed_since(start) > self.duration {
+    if util::elapsed_since(start) >= self.duration {
       None
     } else {
       let laps = 2u64.pow(elapsed as u32 / self.period as u32);

@@ -33,11 +33,10 @@ impl Schedulable for RampUp {
   fn schedule(&self, start: f64) -> Option<(u64, u64)> {
     let elapsed = util::current_epoch() - start;
 
-    if util::elapsed_since(start) > self.duration {
+    if util::elapsed_since(start) >= self.duration {
       None
     } else {
-      let laps =
-        ((self.to - self.from) as f64 * (elapsed / self.duration as f64)) as u64 + self.from;
+      let laps = ((self.to - self.from) as f64 * (elapsed / self.duration as f64)) as u64 + self.from;
 
       Some((laps, self.interval))
     }

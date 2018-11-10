@@ -29,7 +29,7 @@ impl fmt::Display for Constant {
 
 impl Schedulable for Constant {
   fn schedule(&self, start: f64) -> Option<(u64, u64)> {
-    if util::elapsed_since(start) > self.duration {
+    if util::elapsed_since(start) >= self.duration {
       None
     } else {
       Some((self.count, self.interval))
