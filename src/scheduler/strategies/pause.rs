@@ -20,11 +20,11 @@ impl fmt::Display for Pause {
 }
 
 impl Schedulable for Pause {
-  fn schedule(&self, start: f64) -> Option<(u64, u64)> {
+  fn schedule(&self, start: f64) -> Option<(u64, u64, Vec<String>)> {
     if util::elapsed_since(start) >= self.duration {
       None
     } else {
-      Some((0, 1))
+      Some((0, 1, vec![]))
     }
   }
 }

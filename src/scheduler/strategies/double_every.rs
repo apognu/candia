@@ -7,6 +7,7 @@ use crate::util;
 
 #[derive(Debug)]
 pub struct DoubleEvery {
+  pub upstreams: Vec<String>,
   pub duration: u64,
   pub period: u64,
   pub count: u64,
@@ -30,7 +31,7 @@ impl fmt::Display for DoubleEvery {
 }
 
 impl Schedulable for DoubleEvery {
-  fn schedule(&self, start: f64) -> Option<(u64, u64)> {
+  fn schedule(&self, start: f64) -> Option<(u64, u64, Vec<String>)> {
     let elapsed = util::current_epoch() - start;
 
     if util::elapsed_since(start) >= self.duration {
@@ -38,7 +39,7 @@ impl Schedulable for DoubleEvery {
     } else {
       let laps = 2u64.pow(elapsed as u32 / self.period as u32);
 
-      Some((self.count * laps, self.interval))
+      Some((self.count * laps, self.interval, self.upstreams.clone()))
     }
   }
 }

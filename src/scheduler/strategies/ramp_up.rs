@@ -7,6 +7,7 @@ use crate::util;
 
 #[derive(Debug)]
 pub struct RampUp {
+  pub upstreams: Vec<String>,
   pub duration: u64,
   pub interval: u64,
   pub from: u64,
@@ -30,7 +31,7 @@ impl fmt::Display for RampUp {
 }
 
 impl Schedulable for RampUp {
-  fn schedule(&self, start: f64) -> Option<(u64, u64)> {
+  fn schedule(&self, start: f64) -> Option<(u64, u64, Vec<String>)> {
     let elapsed = util::current_epoch() - start;
 
     if util::elapsed_since(start) >= self.duration {
@@ -38,7 +39,7 @@ impl Schedulable for RampUp {
     } else {
       let laps = ((self.to - self.from) as f64 * (elapsed / self.duration as f64)) as u64 + self.from;
 
-      Some((laps, self.interval))
+      Some((laps, self.interval, self.upstreams.clone()))
     }
   }
 }

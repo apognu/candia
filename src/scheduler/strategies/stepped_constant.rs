@@ -31,7 +31,7 @@ impl fmt::Display for SteppedConstant {
 }
 
 impl Schedulable for SteppedConstant {
-  fn schedule(&self, start: f64) -> Option<(u64, u64)> {
+  fn schedule(&self, start: f64) -> Option<(u64, u64, Vec<String>)> {
     let elapsed = util::current_epoch() - start;
     let mut offset = 0;
 
@@ -44,7 +44,7 @@ impl Schedulable for SteppedConstant {
 
     match threshold {
       None => None,
-      Some(s) => Some((s.count, s.interval)),
+      Some(s) => Some((s.count, s.interval, vec![])),
     }
   }
 }

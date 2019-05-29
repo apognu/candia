@@ -6,7 +6,7 @@ use std::fmt;
 pub use self::dispatcher::*;
 
 pub trait Schedulable {
-  fn schedule(&self, start: f64) -> Option<(u64, u64)>;
+  fn schedule(&self, start: f64) -> Option<(u64, u64, Vec<String>)>;
 }
 
 #[derive(Debug)]

@@ -57,6 +57,7 @@ impl fmt::Display for Scenario {
 
 #[derive(Debug)]
 pub struct Upstream {
+  pub name: String,
   pub method: HttpMethod,
   pub url: String,
   pub headers: HashMap<String, String>,

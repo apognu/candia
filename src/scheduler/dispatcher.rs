@@ -6,7 +6,7 @@ use rand::{random, thread_rng, Rng};
 use reqwest::Client;
 
 use crate::result::{Failure, State, Success};
-use crate::specs::HttpMethod::*;
+use crate::specs::{HttpMethod::*, Upstream};
 use crate::{config, result, scheduler::*, specs, util};
 
 pub fn tick<'a>(options: &'a Arc<config::Options>, scenario: &Arc<specs::Scenario>, scheduler: &Scheduler, start: f64, tx: &Sender<Result<Success, Failure>>) -> result::State {
@@ -25,7 +25,7 @@ pub fn tick<'a>(options: &'a Arc<config::Options>, scenario: &Arc<specs::Scenari
   };
 
   // If requests must be spawned
-  if let Some((count, interval)) = threshold {
+  if let Some((count, interval, upstreams)) = threshold {
     if (elapsed as u64) % interval == 0 {
       if options.verbose {
         println!();
@@ -33,17 +33,27 @@ pub fn tick<'a>(options: &'a Arc<config::Options>, scenario: &Arc<specs::Scenari
 
       util::info(&format!("running batch with {} requests over {} seconds...", count, interval));
 
+      let upstreams = Arc::new(upstreams);
+
       // Spawn a thread for each request to be sent
       for _ in 0..count {
         let scenario = Arc::clone(&scenario);
         let tx = Sender::clone(&tx);
         let options = Arc::clone(&options);
+        let upstreams = Arc::clone(&upstreams);
+
         let thread = thread::spawn(move || {
           // Sleep for a random period of the current interval to distribute the requests
           thread::sleep(Duration::from_millis(random::<u64>() % (interval * 1000)));
 
+          let upstreams: Vec<&Upstream> = if upstreams.len() > 0 {
+            scenario.upstreams.iter().filter(|u| upstreams.contains(&u.name)).collect()
+          } else {
+            scenario.upstreams.iter().collect()
+          };
+
           // Pick a random request to be sent
-          if let Some(req) = thread_rng().choose(&scenario.upstreams) {
+          if let Some(req) = thread_rng().choose(&upstreams) {
             tx.send(request(&options, &scenario, req)).unwrap();
           }
         });

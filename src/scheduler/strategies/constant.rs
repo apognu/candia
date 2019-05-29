@@ -7,6 +7,7 @@ use crate::util;
 
 #[derive(Debug)]
 pub struct Constant {
+  pub upstreams: Vec<String>,
   pub duration: u64,
   pub count: u64,
   pub interval: u64,
@@ -28,11 +29,11 @@ impl fmt::Display for Constant {
 }
 
 impl Schedulable for Constant {
-  fn schedule(&self, start: f64) -> Option<(u64, u64)> {
+  fn schedule(&self, start: f64) -> Option<(u64, u64, Vec<String>)> {
     if util::elapsed_since(start) >= self.duration {
       None
     } else {
-      Some((self.count, self.interval))
+      Some((self.count, self.interval, self.upstreams.clone()))
     }
   }
 }
