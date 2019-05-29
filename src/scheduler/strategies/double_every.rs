@@ -26,6 +26,10 @@ impl fmt::Display for DoubleEvery {
       self.period.to_string().bold()
     )?;
 
+    if self.upstreams.len() > 0 {
+      writeln!(f, "    {} {}", "upstreams:".dimmed(), self.upstreams.join(", "))?;
+    }
+
     Ok(())
   }
 }

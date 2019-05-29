@@ -12,6 +12,16 @@ pub enum HttpMethod {
   Post,
 }
 
+impl fmt::Display for HttpMethod {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    match *self {
+      HttpMethod::Get => write!(f, "{}", "GET".bold()),
+      HttpMethod::Post => write!(f, "{}", "POST".bold()),
+      _ => write!(f, "UNKNOWN"),
+    }
+  }
+}
+
 pub struct Scenario {
   pub options: Options,
   pub start: f64,
@@ -43,7 +53,7 @@ impl fmt::Display for Scenario {
 
     writeln!(f, "{}", "UPSTREAMS:".blue().bold())?;
     for upstream in &self.upstreams {
-      write!(f, "{:#}", upstream)?;
+      writeln!(f, "{:#}", upstream)?;
     }
 
     writeln!(f, "{}", "DATASOURCES:".blue().bold())?;
@@ -67,7 +77,8 @@ pub struct Upstream {
 
 impl fmt::Display for Upstream {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    writeln!(f, "  - {:?} {}", self.method, self.url)?;
+    writeln!(f, "  - {} {}", "name:".dimmed(), self.name.bold())?;
+    writeln!(f, "    {} {}", self.method, self.url)?;
 
     if !self.headers.is_empty() {
       writeln!(f, "    Headers:")?;

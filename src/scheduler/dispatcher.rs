@@ -26,7 +26,7 @@ pub fn tick<'a>(options: &'a Arc<config::Options>, scenario: &Arc<specs::Scenari
 
   // If requests must be spawned
   if let Some((count, interval, upstreams)) = threshold {
-    if (elapsed as u64) % interval == 0 {
+    if interval > 0 && (elapsed as u64) % interval == 0 {
       if options.verbose {
         println!();
       }

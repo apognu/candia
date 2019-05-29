@@ -16,13 +16,14 @@ mod scheduler;
 mod util;
 
 use chrono::prelude::*;
+use clap::App;
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::sync::mpsc::{self, Sender};
 use std::sync::{Arc, Mutex};
-use std::thread;
 use std::time::Duration;
+use std::{process, thread};
 
 use crate::interface::result::{self, Failure, State, Success};
 use crate::interface::specs;
@@ -34,19 +35,16 @@ fn main() {
 }
 
 fn parse_cli() -> Result<(), Box<dyn Error>> {
-  use clap::App;
-
   let yml = load_yaml!("cli.yml");
-  let app = App::from_yaml(yml).get_matches();
-  let options = config::parse_options(&app);
+  let mut app = App::from_yaml(yml);
 
-  match app.subcommand() {
+  let matches = { app.clone().get_matches() };
+  let options = config::parse_options(&matches);
+
+  match matches.subcommand() {
     ("run", Some(args)) => run(options, args),
     ("check", Some(args)) => check(&options, args),
-    _ => {
-      println!("{}", app.usage());
-      Ok(())
-    }
+    _ => usage(&mut app),
   }
 }
 
@@ -125,4 +123,9 @@ fn check(_options: &config::Options, args: &clap::ArgMatches) -> Result<(), Box<
   print!("{:#}", scenario);
 
   Ok(())
+}
+
+fn usage(app: &mut App) -> ! {
+  let _ = app.print_help();
+  process::exit(1)
 }

@@ -21,7 +21,7 @@ options:
   timeout: 5
 
 schedulers:
-  - type: SteppedConstant
+  - kind: SteppedConstant
     steps:
       - duration: 30
         count: 10
@@ -29,10 +29,10 @@ schedulers:
       - duration: 30
         count: 20
         interval: 2
-  - type: Pause
+  - kind: Pause
     args:
       duration: 5
-  - type: RampUp
+  - kind: RampUp
     args:
       duration: 60
       from: 10
@@ -40,7 +40,8 @@ schedulers:
       interval: 5
 
 upstreams:
-  - method: GET
+  - name: example
+    method: GET
     url: https://example.com/api/users/1
     headers:
       Accept: application/json
@@ -50,6 +51,24 @@ upstreams:
 For now, only ```GET``` and ```POST``` requests are supported.
 
 As well as setting each request's timeout, the ```timeout``` setting defines how long the runner will wait when all schedulers are done to possibly wait for to-be-fulfilled requests. Preferably, we will, in the future, actually check if all requests have been fulfilled.
+
+### Filtering used upstreams
+
+By default, for each scheduler, a random upstream is picked for each request sent. You can constraint a scheduler to using one or several specific upstreams by using an upstream filter:
+
+
+```
+schedulers:
+  - kind: RampUp
+    args:
+      duration: 60
+      from: 10
+      to: 100
+      interval: 5
+    upstreams: ["upstream1", "upstream2"]
+```
+
+This scheduler will pick a random upstream between `upstream1` and `upstream2` and will never hit another one.
 
 ### Dynamic parameters
 
@@ -75,15 +94,15 @@ upstreams:
 
 datasources:
   bodies:
-    type: directory
+    kind: directory
     source: /tmp/bodies
   domains:
-    type: array
+    kind: array
     data:
       - example.net
       - api.example.net
   users:
-    type: file
+    kind: file
     source: /tmp/users    
 ```
 
@@ -97,15 +116,18 @@ OPTIONS:
   - timeout: 5s
 
 SCHEDULERS:
-  - type: RampUp
+  - kind: RampUp
     ramp up requests every 1s from 1 to 100 for 15s
-  - type: Pause
+  
+  - kind: Pause
     pause for 10s
-  - type: Constant
+  
+  - kind: Constant
     100 requests every 5s for 10s
 
 UPSTREAMS:
-  - Get http://127.0.0.1:8080/
+  - name: localhost
+    GET http://127.0.0.1:8080/
 ```
 
 ## Run the scenario

@@ -24,6 +24,10 @@ impl fmt::Display for Constant {
       self.duration.to_string().bold()
     )?;
 
+    if self.upstreams.len() > 0 {
+      writeln!(f, "    {} {}", "upstreams:".dimmed(), self.upstreams.join(", "))?;
+    }
+
     Ok(())
   }
 }
