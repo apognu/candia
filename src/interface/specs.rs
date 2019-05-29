@@ -2,8 +2,8 @@ use colored::*;
 use std::collections::HashMap;
 use std::fmt;
 
-use datasource::Data;
-use scheduler::*;
+use crate::datasource::Data;
+use crate::scheduler::*;
 
 #[derive(Debug)]
 pub enum HttpMethod {
@@ -32,23 +32,23 @@ impl Default for Options {
 
 impl fmt::Display for Scenario {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    writeln!(f, "{}", "OPTIONS".blue().bold());
-    writeln!(f, "  {} {}", "timeout:".dimmed(), format!("{}s", self.options.timeout).bold());
-    writeln!(f);
+    writeln!(f, "{}", "OPTIONS".blue().bold())?;
+    writeln!(f, "  {} {}", "timeout:".dimmed(), format!("{}s", self.options.timeout).bold())?;
+    writeln!(f)?;
 
-    writeln!(f, "{}", "SCHEDULERS:".blue().bold());
+    writeln!(f, "{}", "SCHEDULERS:".blue().bold())?;
     for scheduler in &self.schedulers {
-      writeln!(f, "{:#}", scheduler);
+      writeln!(f, "{:#}", scheduler)?;
     }
 
-    writeln!(f, "{}", "UPSTREAMS:".blue().bold());
+    writeln!(f, "{}", "UPSTREAMS:".blue().bold())?;
     for upstream in &self.upstreams {
-      write!(f, "{:#}", upstream);
+      write!(f, "{:#}", upstream)?;
     }
 
-    writeln!(f, "{}", "DATASOURCES:".blue().bold());
+    writeln!(f, "{}", "DATASOURCES:".blue().bold())?;
     for (name, data) in &self.datasources {
-      writeln!(f, "  - {}: {} entries", name.bold(), data.len());
+      writeln!(f, "  - {}: {} entries", name.bold(), data.len())?;
     }
 
     Ok(())
@@ -66,12 +66,12 @@ pub struct Upstream {
 
 impl fmt::Display for Upstream {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    writeln!(f, "  - {:?} {}", self.method, self.url);
+    writeln!(f, "  - {:?} {}", self.method, self.url)?;
 
     if !self.headers.is_empty() {
-      writeln!(f, "    Headers:");
+      writeln!(f, "    Headers:")?;
       for (key, value) in &self.headers {
-        writeln!(f, "      - {} = {}", key.bold(), value);
+        writeln!(f, "      - {} = {}", key.bold(), value)?;
       }
     }
 

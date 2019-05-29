@@ -1,7 +1,7 @@
 use colored::*;
 use std::sync::{Arc, Mutex};
 
-use util;
+use crate::util;
 
 pub enum State {
   Continue,
@@ -60,7 +60,8 @@ pub fn process(results: &Arc<Mutex<Vec<Result<Success, Failure>>>>) {
     .map(|x| match x {
       Ok(Success { duration, .. }) => *duration,
       _ => 0,
-    }).collect::<Vec<i64>>();
+    })
+    .collect::<Vec<i64>>();
 
   println!();
   util::info("done.\n");
@@ -99,11 +100,13 @@ fn format_rate(value: usize, total: usize) -> f64 {
 
 fn format_res_ms(value: Result<u64, &'static str>) -> String {
   match value {
-    Ok(value) => if value < 1000 {
-      format!("{}ms", value)
-    } else {
-      format!("{}s", value as f64 / 1000.0)
-    },
+    Ok(value) => {
+      if value < 1000 {
+        format!("{}ms", value)
+      } else {
+        format!("{}s", value as f64 / 1000.0)
+      }
+    }
 
     Err(_) => String::from("N/A"),
   }
@@ -111,11 +114,13 @@ fn format_res_ms(value: Result<u64, &'static str>) -> String {
 
 fn format_opt_ms(value: Option<u64>) -> String {
   match value {
-    Some(value) => if value < 1000 {
-      format!("{}ms", value)
-    } else {
-      format!("{}s", value as f64 / 1000.0)
-    },
+    Some(value) => {
+      if value < 1000 {
+        format!("{}ms", value)
+      } else {
+        format!("{}s", value as f64 / 1000.0)
+      }
+    }
 
     None => String::from("N/A"),
   }

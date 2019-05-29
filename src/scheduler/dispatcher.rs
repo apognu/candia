@@ -5,9 +5,9 @@ use std::time::Duration;
 use rand::{random, thread_rng, Rng};
 use reqwest::Client;
 
-use result::{Failure, State, Success};
-use specs::HttpMethod::*;
-use {config, result, scheduler::*, specs, util};
+use crate::result::{Failure, State, Success};
+use crate::specs::HttpMethod::*;
+use crate::{config, result, scheduler::*, specs, util};
 
 pub fn tick<'a>(options: &'a Arc<config::Options>, scenario: &Arc<specs::Scenario>, scheduler: &Scheduler, start: f64, tx: &Sender<Result<Success, Failure>>) -> result::State {
   // How much time passed since this scheduler was created?

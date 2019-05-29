@@ -5,10 +5,10 @@ use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 
-use datasource::{self, DataSource};
-use interface::specs::{self, HttpMethod::*};
-use scheduler::{strategies, *};
-use util;
+use crate::datasource::{self, DataSource};
+use crate::interface::specs::{self, HttpMethod::*};
+use crate::scheduler::{strategies, *};
+use crate::util;
 
 #[derive(Deserialize)]
 pub struct Config {

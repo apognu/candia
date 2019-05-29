@@ -2,8 +2,8 @@ use colored::*;
 
 use std::fmt;
 
-use scheduler::Schedulable;
-use util;
+use crate::scheduler::Schedulable;
+use crate::util;
 
 #[derive(Debug)]
 pub struct Constant {
@@ -14,14 +14,14 @@ pub struct Constant {
 
 impl fmt::Display for Constant {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    writeln!(f, "  - {} {}", "type:".dimmed(), "Constant".bold());
+    writeln!(f, "  - {} {}", "type:".dimmed(), "Constant".bold())?;
     writeln!(
       f,
       "    {} requests every {}s for {}s",
       self.count.to_string().bold(),
       self.interval.to_string().bold(),
       self.duration.to_string().bold()
-    );
+    )?;
 
     Ok(())
   }

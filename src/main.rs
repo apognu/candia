@@ -24,8 +24,8 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
 
-use interface::result::{self, Failure, State, Success};
-use interface::specs;
+use crate::interface::result::{self, Failure, State, Success};
+use crate::interface::specs;
 
 fn main() {
   if let Err(error) = parse_cli() {

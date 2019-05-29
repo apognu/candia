@@ -7,8 +7,8 @@ use colored::*;
 use rand::{self, Rng};
 use regex::Regex;
 
-use datasource::Data;
-use result::{Failure, Success};
+use crate::datasource::Data;
+use crate::result::{Failure, Success};
 
 pub fn current_epoch() -> f64 {
   Utc::now().timestamp() as f64

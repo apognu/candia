@@ -2,8 +2,8 @@ use colored::*;
 
 use std::fmt;
 
-use scheduler::{strategies, Schedulable};
-use util;
+use crate::scheduler::{strategies, Schedulable};
+use crate::util;
 
 #[derive(Debug)]
 pub struct SteppedConstant {
@@ -12,8 +12,8 @@ pub struct SteppedConstant {
 
 impl fmt::Display for SteppedConstant {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    writeln!(f, "  - {} {}", "type:".dimmed(), "SteppedConstant".bold());
-    writeln!(f, "    {}", "steps:".dimmed());
+    writeln!(f, "  - {} {}", "type:".dimmed(), "SteppedConstant".bold())?;
+    writeln!(f, "    {}", "steps:".dimmed())?;
 
     for (idx, step) in self.steps.iter().enumerate() {
       writeln!(
@@ -23,7 +23,7 @@ impl fmt::Display for SteppedConstant {
         step.count.to_string().bold(),
         step.interval.to_string().bold(),
         step.duration.to_string().bold()
-      );
+      )?;
     }
 
     Ok(())

@@ -2,8 +2,8 @@ use colored::*;
 
 use std::fmt;
 
-use scheduler::Schedulable;
-use util;
+use crate::scheduler::Schedulable;
+use crate::util;
 
 #[derive(Debug)]
 pub struct RampUp {
@@ -15,7 +15,7 @@ pub struct RampUp {
 
 impl fmt::Display for RampUp {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    writeln!(f, "  - {} {}", "type:".dimmed(), "RampUp".bold());
+    writeln!(f, "  - {} {}", "type:".dimmed(), "RampUp".bold())?;
     writeln!(
       f,
       "    ramp up requests every {}s from {} to {} for {}s",
@@ -23,7 +23,7 @@ impl fmt::Display for RampUp {
       self.from.to_string().bold(),
       self.to.to_string().bold(),
       self.duration.to_string().bold()
-    );
+    )?;
 
     Ok(())
   }
