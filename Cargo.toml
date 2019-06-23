@@ -1,7 +1,10 @@
 [package]
 name = "candia"
 version = "0.1.0"
+description = "simple load-testing tool"
 authors = ["Antoine POPINEAU <antoine.popineau@appscho.com>"]
+repository = "https://github.com/apognu/candia"
+license = "MIT"
 edition = "2018"
 
 [dependencies]

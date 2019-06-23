@@ -1,0 +1,40 @@
+dist: xenial
+language: rust
+sudo: required
+
+before_install:
+  - rustup self update
+
+install:
+  - rustup component add clippy
+  - cargo update
+
+jobs:
+  include:
+    - stage: Test and build
+      script:
+        - cargo clippy -- -D warnings
+        - cargo build
+    - stage: Build and deploy as GitHub release
+      script:
+        - cargo build --release
+      if: tag IS present
+      before_deploy:
+        - RELEASE_MESSAGE="$(git tag -ln --format '%(subject)' $TRAVIS_TAG)"
+      deploy:
+        provider: releases
+        name: "$TRAVIS_TAG"
+        body: "$RELEASE_MESSAGE"
+        prerelease: true
+        file: target/release/candia
+        overwrite: true
+        skip_cleanup: true
+        on:
+          tags: true
+        api_key:
+          secure: dTrI37l4FbAZXMes2jvDYqbS4qU71Oxz+1KJnTmYaHjWPDqo3URUMYZZoMtQgrCIEK1OW4wB5+5Tog6xGaYjM0BrAMF61PXimTfFkrkTtpxWaUr0snWIgXAGMATaYV+D8UPtwe6Vc0kvFRLqyqzIXP3P1Db9aK4Xj1BlcUwMPRVgodP1NF1Vq2UgxoW0wUVjtONfX9Uexj3Gj6D3ApoGZR4Dqs4NeSeK2IimxLeM3hf2t2nqaOOEd86/oDKuRzrABTQBFK68ZeXy5Dd1bn9uYUWBUJq2djksBX43qFiQMr95GxNykw+m7cdhw5X/uIwRciXter2q4hTskq7y6NPju3+nGvwg9NSDjlw9POQVxd41fGqdbxwgr/NidPGLQ6pQTOYwrn7sIiPbjsf5xKXbT/TFO1sKZxSGwSVGq7kTNKbIHjUXvPolpmWLEXgzpHjf7PhHPvt5lk6fRS+d4ou4lkKQiupDkJhfyidgVUcmeO+UajMsoYj8uUmqKsacjg7bfC9W3hnMAklhQxS4g5In4yryv+t0Mx0tjC/b6A5F76QGIJfz40HRW16FCjVnexxGkHxoJXPrGYXO6D0RNs1ValtR10alAR7+vQ3s17qatqxCRo/nAJNzFdhMXF0i4mxKPRaIoKgHElkqtZAJ7tRAgmddCTb1IPdlRxCZhbDnA4k=
+
+cache: cargo
+before_cache:
+  - chmod -R a+r $HOME/.cargo
+

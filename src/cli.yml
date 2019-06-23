@@ -1,0 +1,32 @@
+name: candia
+version: "1.0"
+about: simple and modular load testing tool
+author: Antoine POPINEAU <antoine.popineau@appscho.com>
+
+args:
+  - verbose:
+      short: v
+      long: verbose
+      help: enable verbose logging
+      takes_value: false
+
+subcommands:
+  - run:
+      about: run the given scenario
+      args:
+        - config:
+            value_name: CONFIG
+            help: path to the scenario config file
+            required: true
+        - disable_logging:
+            long: disable-logging
+            help: do not write output log
+            takes_value: false
+  
+  - check:
+      about: parse and display the given scenario
+      args:
+        - config:
+            value_name: CONFIG
+            help: path to the scenario config file
+            required: true

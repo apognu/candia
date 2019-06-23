@@ -2,4 +2,4 @@
 **/*.rs.bk
 
 *.csv
-*.yml
+config.yml
