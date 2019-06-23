@@ -36,7 +36,7 @@ fn main() {
 
 fn parse_cli() -> Result<(), Box<dyn Error>> {
   let yml = load_yaml!("cli.yml");
-  let mut app = App::from_yaml(yml);
+  let mut app = App::from_yaml(yml).version(crate_version!());
 
   let matches = { app.clone().get_matches() };
   let options = config::parse_options(&matches);
