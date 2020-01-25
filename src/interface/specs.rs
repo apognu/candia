@@ -22,6 +22,7 @@ impl fmt::Display for HttpMethod {
   }
 }
 
+#[derive(Debug)]
 pub struct Scenario {
   pub options: Options,
   pub start: f64,
@@ -30,6 +31,7 @@ pub struct Scenario {
   pub datasources: HashMap<String, Data>,
 }
 
+#[derive(Debug)]
 pub struct Options {
   pub timeout: u64,
 }

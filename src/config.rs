@@ -10,7 +10,7 @@ use crate::interface::specs::{self, HttpMethod::*};
 use crate::scheduler::{strategies, *};
 use crate::util;
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Config {
   options: Option<ConfigOptions>,
   schedulers: Vec<ConfigScheduler>,
@@ -18,12 +18,12 @@ pub struct Config {
   datasources: Option<HashMap<String, ConfigDatasource>>,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct ConfigOptions {
   pub timeout: Option<u64>,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 struct ConfigScheduler {
   kind: String,
   #[serde(default)]
@@ -34,7 +34,7 @@ struct ConfigScheduler {
   upstreams: Vec<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 struct ConfigUpstream {
   name: String,
   method: String,
@@ -47,13 +47,13 @@ struct ConfigUpstream {
   body: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 struct ConfigUpstreamBasicAuth {
   username: String,
   password: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 struct ConfigDatasource {
   kind: String,
   source: Option<String>,

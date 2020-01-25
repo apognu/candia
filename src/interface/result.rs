@@ -64,7 +64,6 @@ pub fn process(results: &Arc<Mutex<Vec<Result<Success, Failure>>>>) {
     .collect::<Vec<i64>>();
 
   println!();
-  util::info("done.\n");
 
   let mut histogram = histogram::Histogram::new();
 

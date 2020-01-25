@@ -2,6 +2,7 @@ use std::sync::{mpsc::Sender, Arc};
 use std::thread;
 use std::time::Duration;
 
+use indicatif::ProgressBar;
 use rand::{random, thread_rng, Rng};
 use reqwest::Client;
 
@@ -9,7 +10,7 @@ use crate::result::{Failure, State, Success};
 use crate::specs::{HttpMethod::*, Upstream};
 use crate::{config, result, scheduler::*, specs, util};
 
-pub fn tick<'a>(options: &'a Arc<config::Options>, scenario: &Arc<specs::Scenario>, scheduler: &Scheduler, start: f64, tx: &Sender<Result<Success, Failure>>) -> result::State {
+pub fn tick<'a>(options: &'a Arc<config::Options>, scenario: &Arc<specs::Scenario>, scheduler: &Scheduler, start: f64, tx: &Sender<Result<Success, Failure>>, pb: &ProgressBar) -> result::State {
   // How much time passed since this scheduler was created?
   let elapsed = util::current_epoch() - start;
   let mut threads = vec![];
@@ -31,7 +32,7 @@ pub fn tick<'a>(options: &'a Arc<config::Options>, scenario: &Arc<specs::Scenari
         println!();
       }
 
-      util::info(&format!("running batch with {} requests over {} seconds...", count, interval));
+      pb.set_message(&format!("running batch with {} requests over {} seconds...", count, interval));
 
       let upstreams = Arc::new(upstreams);
 

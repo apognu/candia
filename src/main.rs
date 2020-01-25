@@ -17,6 +17,7 @@ mod util;
 
 use chrono::prelude::*;
 use clap::App;
+use indicatif::{ProgressBar, ProgressStyle};
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
@@ -86,15 +87,31 @@ fn run(options: config::Options, args: &clap::ArgMatches) -> Result<(), Box<dyn 
     });
   }
 
+  let duration = (scenario.schedulers.iter().map(|s| s.duration()).sum::<u64>()) + scenario.options.timeout;
+  let mut step = 0;
+  let pb = Arc::new(ProgressBar::new(duration));
+
+  pb.enable_steady_tick(100);
+  pb.set_style(
+    ProgressStyle::default_bar()
+      .template("{spinner:.green} [{elapsed_precise}] [{bar:50.white/blue}] {prefix} {msg}")
+      .progress_chars("#> "),
+  );
+
+  let pbclone = Arc::clone(&pb);
+
   // Main loop iterating over the different configured schedulers
   let main = thread::spawn(move || {
     // Start running the curent scheduler, if there are no schedulers left, the scenario is finished
     for scheduler in &scenario.schedulers {
+      step += 1;
       let start = util::current_epoch();
 
       // Send a tick every second, each schedulers will determine if requests have to be sent for that tick
       loop {
-        let result = scheduler::tick(&Arc::clone(&options), &Arc::clone(&scenario), scheduler, start, &Sender::clone(&tx));
+        pbclone.set_prefix(&format!("Step {}:", step));
+        pbclone.set_position((util::current_epoch() - scenario.start) as u64);
+        let result = scheduler::tick(&Arc::clone(&options), &Arc::clone(&scenario), scheduler, start, &Sender::clone(&tx), &pbclone);
 
         // A scheduler can tell us if it is finished or not, if it is, we skip to the next scheduler in line
         if let State::Stop = result {
@@ -109,7 +126,15 @@ fn run(options: config::Options, args: &clap::ArgMatches) -> Result<(), Box<dyn 
 
   main.join().unwrap();
 
-  thread::sleep(Duration::from_secs(timeout));
+  pb.set_prefix("Finalizing:");
+  pb.set_message("waiting for timeout to expire");
+
+  for _ in 0..timeout {
+    pb.inc(1);
+    thread::sleep(Duration::from_secs(1));
+  }
+
+  pb.finish_with_message("done");
 
   result::process(&results);
 

@@ -29,3 +29,15 @@ impl fmt::Display for Scheduler {
     }
   }
 }
+
+impl Scheduler {
+  pub fn duration(&self) -> u64 {
+    match self {
+      Scheduler::Constant(s) => s.duration,
+      Scheduler::SteppedConstant(s) => s.steps.iter().map(|s| s.duration).sum(),
+      Scheduler::DoubleEvery(s) => s.duration,
+      Scheduler::RampUp(s) => s.duration,
+      Scheduler::Pause(s) => s.duration,
+    }
+  }
+}
