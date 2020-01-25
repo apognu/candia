@@ -112,7 +112,7 @@ pub fn request(options: &Arc<config::Options>, scenario: &Arc<specs::Scenario>, 
       let duration = util::current_epoch_ms() - duration;
 
       match response.status().as_u16() {
-        200...399 => Success::new(offset, request_desc, duration, response.status().as_u16()),
+        200..=399 => Success::new(offset, request_desc, duration, response.status().as_u16()),
         code => Failure::http(offset, request_desc, duration, code, String::new()),
       }
     }
